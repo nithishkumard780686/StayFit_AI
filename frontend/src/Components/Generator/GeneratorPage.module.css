@@ -1,0 +1,85 @@
+@import "tailwindcss" reference;
+
+.chat {
+    background-color: var(--muted);
+    @apply px-5 py-3 rounded-2xl mb-4 max-w-[100%] text-wrap;
+    animation: chatPop 0.4s ease-out;
+    animation: chatSlideIn 0.4s ease-in-out;
+}
+.skeletonChat {
+    background-color: var(--muted);
+    @apply flex flex-col items-start space-y-2 px-5 py-3 rounded-2xl mb-4 w-full justify-start;
+    animation: chatPop 0.4s ease-out;
+    animation: chatSlideIn 0.4s ease-in-out;
+}
+.skeleton1 {
+    @apply h-4 w-[90%] bg-zinc-800;
+}
+.skeleton2 {
+    @apply h-4 w-[80%] bg-zinc-800;
+}
+.inputs {
+    @apply mb-4 w-full;
+    animation: inputNbtn 0.5s ease-in;
+}
+.submitbtn {
+    @apply mb-4 w-full sm:w-auto;
+    animation: inputNbtn 0.5s ease-in;
+}
+.bfpInput {
+    @apply mb-4 w-full;
+    animation: inputNbtn 0.5s ease-in;
+}
+.ToggleGroup {
+    @apply flex gap-2 justify-start items-center mb-4 flex-wrap w-full;
+    animation: inputNbtn 0.5s ease-in;
+}
+.toggleBtn {
+    @apply px-4 py-2 border rounded-md cursor-pointer text-sm;
+}
+
+@keyframes chatPop {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+}
+@keyframes chatSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) translateX(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) translateX(0);
+    }
+}
+@keyframes inputNbtn {
+    0%{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100%{
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+
+.slideIn {
+    animation: slideInFromRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(40px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
