@@ -1016,22 +1016,20 @@ const LoginSignup = () => {
         {/* Onboarding Header: Progress & Sign Out */}
         <header className="w-full mb-8">
           {isSignedIn && (
-            <div className="flex justify-end items-center mb-3">
-              <button
-                type="button"
-                onClick={async () => {
-                  localStorage.removeItem("stayfit_onboarding_data");
-                  localStorage.removeItem("stayfit_latest_plan_name");
-                  await clerk.signOut();
-                  navigate("/");
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-xs font-bold flex items-center gap-1.5 transition-all duration-200 cursor-pointer active:scale-95"
-                title="Sign Out"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                localStorage.removeItem("stayfit_onboarding_data");
+                localStorage.removeItem("stayfit_latest_plan_name");
+                await clerk.signOut();
+                navigate("/");
+              }}
+              className="fixed top-4 right-4 md:top-6 md:right-8 z-50 px-4 py-2 rounded-xl bg-zinc-900/90 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-xs font-bold flex items-center gap-2 shadow-xl backdrop-blur-md transition-all duration-200 cursor-pointer active:scale-95"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5 text-zinc-400 group-hover:text-red-400" />
+              <span>Sign Out</span>
+            </button>
           )}
 
           {step > 1 && step <= 26 ? (
