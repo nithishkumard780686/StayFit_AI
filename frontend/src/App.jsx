@@ -8,6 +8,35 @@ import HowToDo from "./Components/HowToDo/HowToDo";
 import HeroVisual, { HeroBackground } from "./Components/Auth/HeroVisual";
 import { AuthenticateWithRedirectCallback } from "./lib/clerkClient";
 
+const SSOCallbackHandler = () => {
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate("/dashboard");
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
+  return (
+    <div className="bg-[#0B0B0B] h-screen w-screen flex flex-col items-center justify-center text-white relative">
+      <HeroBackground />
+      <div className="relative z-10 flex flex-col items-center justify-center gap-4">
+        <div className="relative w-16 h-16 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-4 border-zinc-800 border-t-[#a3e635] animate-spin" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#a3e635] animate-ping" />
+        </div>
+        <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest animate-pulse">
+          Securing connection...
+        </p>
+      </div>
+      <AuthenticateWithRedirectCallback 
+        signUpForceRedirectUrl="/dashboard" 
+        signInForceRedirectUrl="/dashboard" 
+      />
+    </div>
+  );
+};
+
 function App() {
   return (
     <Routes>
@@ -45,31 +74,7 @@ function App() {
       <Route path="/howtodo" element={<HowToDo />} />
 
       {/* SSO OAuth Callback Handler Route */}
-      <Route
-        path="/sso-callback"
-        element={
-          <div className="bg-[#0B0B0B] h-screen w-screen flex flex-col items-center justify-center text-white relative">
-            {/* Global Animated Gradient Background */}
-            <HeroBackground />
-            
-            {/* Premium Loader Overlay */}
-            <div className="relative z-10 flex flex-col items-center justify-center gap-4">
-              <div className="relative w-16 h-16 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full border-4 border-zinc-800 border-t-[#a3e635] animate-spin" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#a3e635] animate-ping" />
-              </div>
-              <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest animate-pulse">
-                Securing connection...
-              </p>
-            </div>
-            
-            <AuthenticateWithRedirectCallback 
-              signUpForceRedirectUrl="/dashboard" 
-              signInForceRedirectUrl="/dashboard" 
-            />
-          </div>
-        }
-      />
+      <Route path="/sso-callback" element={<SSOCallbackHandler />} />
     </Routes>
   );
 }

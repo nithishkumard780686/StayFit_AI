@@ -52,9 +52,9 @@ app.post("/api/gemini", async (req, res) => {
 
     const startTime = Date.now();
     const { text } = await generateText({
-      model: google("gemini-3.5-flash"),
+      model: google("gemini-2.0-flash"),
       prompt,
-      maxRetries: 2,
+      maxRetries: 3,
     });
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 

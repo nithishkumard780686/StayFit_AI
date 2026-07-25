@@ -189,6 +189,13 @@ const LoginSignup = () => {
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const clerk = useClerk();
 
+  // Auth Timeout Fallback (3.5s timeout if Clerk takes long to connect on slow network or adblocker)
+  const [authTimeout, setAuthTimeout] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setAuthTimeout(true), 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Auth Form View State ("signup" or "login")
   const [authView, setAuthView] = useState("login");
   const [isCheckingHistory, setIsCheckingHistory] = useState(isSignedIn);
@@ -846,7 +853,7 @@ const LoginSignup = () => {
     }
   };
 
-  if (!isAuthLoaded || isCheckingHistory) {
+  if ((!isAuthLoaded && !authTimeout) || isCheckingHistory) {
     return (
       <div className="w-full h-full min-h-[640px] flex flex-col items-center justify-center bg-transparent gap-4">
         <div className="relative w-12 h-12 flex items-center justify-center">
@@ -1049,7 +1056,7 @@ const LoginSignup = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-grow flex flex-col justify-center min-h-[380px] w-full">
+        <main className="flex-grow flex flex-col justify-center min-h-0 w-full overflow-y-auto max-h-[58vh] md:max-h-[64vh] custom-scrollbar px-1.5 py-2">
           <div className="w-full flex-grow flex flex-col justify-center">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -2587,28 +2594,30 @@ const LoginSignup = () => {
         </div>
       </main>
 
-      {/* Bottom Navigation Actions (Flat bottom) */}
+      {/* Bottom Navigation Actions (Always visible at bottom) */}
       {step > 1 && (
-        <div className="w-full flex flex-col mt-6">
+        <div className="w-full flex flex-col mt-4 shrink-0 sticky bottom-0 z-30 bg-[#0B0B0B]/90 backdrop-blur-md pt-3 pb-2 border-t border-zinc-800/40">
           {validationError && (
-            <div className="w-full bg-red-500/10 border border-red-500/25 rounded-2xl px-5 py-3.5 text-red-400 font-bold text-sm md:text-base flex items-center gap-3 mb-4 animate-shake transition-all duration-300">
-              <ShieldAlert className="w-5.5 h-5.5 shrink-0 text-red-400" />
+            <div className="w-full bg-red-500/10 border border-red-500/25 rounded-2xl px-4 py-3 text-red-400 font-bold text-xs md:text-sm flex items-center gap-2.5 mb-3 animate-shake transition-all duration-300">
+              <ShieldAlert className="w-5 h-5 shrink-0 text-red-400" />
               <span>{validationError}</span>
             </div>
           )}
           
-          <footer className="w-full flex items-center justify-between gap-4 border-t border-zinc-800/20 pt-6">
+          <footer className="w-full flex items-center justify-between gap-4">
             <button 
+              type="button"
               onClick={prevStep}
-              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors font-bold text-xs active:scale-95 cursor-pointer py-1.5"
+              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors font-bold text-xs active:scale-95 cursor-pointer py-2 px-3 rounded-lg hover:bg-white/5"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
             </button>
             
             <button 
+              type="button"
               onClick={step === 26 ? handleOnboardingComplete : nextStep}
-              className="bg-[#a3e635] text-black px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg shadow-[#a3e635]/15 hover:brightness-110 active:scale-95 transition-all group cursor-pointer"
+              className="bg-[#a3e635] text-black px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-2 shadow-lg shadow-[#a3e635]/15 hover:brightness-110 active:scale-95 transition-all group cursor-pointer shrink-0 z-40"
             >
               {step === 26 ? "Get Started" : "Next Step"}
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

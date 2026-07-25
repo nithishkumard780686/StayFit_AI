@@ -444,20 +444,37 @@ const GeneratorPage = () => {
   };
 
   const promptSend = async (promptText, signal) => {
-    const response = await fetch(`${BACKEND_URL}/api/gemini`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: promptText }),
-      signal: signal,
-    });
-    
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || `HTTP ${response.status} API prompt error.`);
+    let attempts = 0;
+    const maxAttempts = 3;
+    let lastError = null;
+
+    while (attempts < maxAttempts) {
+      try {
+        attempts++;
+        const response = await fetch(`${BACKEND_URL}/api/gemini`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: promptText }),
+          signal: signal,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${response.status} API prompt error.`);
+        }
+
+        const data = await response.json();
+        return data?.text || "";
+      } catch (err) {
+        if (err.name === "AbortError") throw err;
+        lastError = err;
+        if (attempts < maxAttempts) {
+          // Wait 2.5 seconds before retrying to allow Render free tier backend server to finish waking up
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+        }
+      }
     }
-    
-    const data = await response.json();
-    return data?.text || "";
+    throw lastError || new Error("Generation failed after multiple attempts.");
   };
 
   function parseMarkdownToHtml(text) {
