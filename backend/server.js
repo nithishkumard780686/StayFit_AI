@@ -37,7 +37,7 @@ if (mongodbUri && !mongodbUri.includes("<username>")) {
   console.warn("MongoDB Atlas Connection: Missing or unconfigured MONGODB_URI in backend/.env");
 }
 
-// Route 1: LLM Prompt Generation (Gemini 3.5 Flash)
+// Route 1: LLM Prompt Generation (Gemini AI with Model Fallbacks)
 app.post("/api/gemini", async (req, res) => {
   const requestId = Date.now().toString(36);
 
@@ -51,18 +51,47 @@ app.post("/api/gemini", async (req, res) => {
     console.log(`[${requestId}] POST /api/gemini -> Request received (${prompt.length} chars): "${promptPreview}..."`);
 
     const startTime = Date.now();
-    const { text } = await generateText({
-      model: google("gemini-2.0-flash"),
-      prompt,
-      maxRetries: 3,
-    });
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    let text = "";
+    const candidateModels = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-2.0-flash"];
+    let lastErr = null;
 
+    for (const modelName of candidateModels) {
+      let attempts = 0;
+      const maxAttempts = 2;
+
+      while (attempts < maxAttempts) {
+        try {
+          attempts++;
+          const result = await generateText({
+            model: google(modelName),
+            prompt,
+          });
+          text = result.text;
+          console.log(`[${requestId}] Successfully generated text with model: ${modelName}`);
+          break;
+        } catch (err) {
+          console.warn(`[${requestId}] Attempt ${attempts} with ${modelName} failed: ${err.message}`);
+          lastErr = err;
+          if (attempts >= maxAttempts) break;
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
+      }
+      if (text) break;
+    }
+
+    if (!text && lastErr) {
+      throw lastErr;
+    }
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`[${requestId}] generateText completed in ${elapsed}s (${text.length} chars)`);
     return res.json({ text });
   } catch (error) {
     console.error(`[${requestId}] Gemini Generation Error:`, error.message || error);
-    const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
+    let errorMessage = error instanceof Error ? error.message : "Internal Server Error";
+    if (errorMessage.includes("Quota exceeded") || errorMessage.includes("rate-limits")) {
+      errorMessage = "Google Gemini AI rate limit reached. Please wait 30 seconds and try again.";
+    }
     return res.status(500).json({ error: errorMessage });
   }
 });
