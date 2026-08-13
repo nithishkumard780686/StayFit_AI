@@ -57,8 +57,8 @@ const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer group" 
             onClick={() => handleNavClick("/dashboard")}
           >
-            <div className="w-9 h-9 rounded-xl bg-[#A3E635] flex items-center justify-center shadow-[0_0_15px_rgba(163,230,53,0.3)] group-hover:shadow-[0_0_20px_rgba(163,230,53,0.5)] group-hover:scale-105 transition-all duration-300">
-              <Dumbbell className="w-5 h-5 text-black" />
+            <div className="w-9 h-9 rounded-xl bg-black border border-zinc-800 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(163,230,53,0.3)] group-hover:shadow-[0_0_20px_rgba(163,230,53,0.5)] group-hover:scale-105 transition-all duration-300">
+              <img src="/favicon.png" alt="StayFit AI Logo" className="w-full h-full object-contain p-0.5" />
             </div>
             <span className="font-bold text-xl tracking-tight text-white group-hover:text-[#A3E635] transition-colors duration-300">
               StayFit <span className="text-[#A3E635]">Ai</span>
@@ -117,8 +117,8 @@ const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer group" 
             onClick={() => handleNavClick("/dashboard")}
           >
-            <div className="w-9 h-9 rounded-xl bg-[#A3E635] flex items-center justify-center shadow-[0_0_15px_rgba(163,230,53,0.3)]">
-              <Dumbbell className="w-5 h-5 text-black" />
+            <div className="w-9 h-9 rounded-xl bg-black border border-zinc-800 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(163,230,53,0.3)]">
+              <img src="/favicon.png" alt="StayFit AI Logo" className="w-full h-full object-contain p-0.5" />
             </div>
             <span className="font-bold text-xl tracking-tight text-white">
               StayFit <span className="text-[#A3E635]">Ai</span>
