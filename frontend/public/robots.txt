@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /howtodo
+
+Disallow: /generate
+Disallow: /dashboard
+Disallow: /plan
+Disallow: /sso-callback
+
+Sitemap: https://stay-fit-ai.vercel.app/sitemap.xml
